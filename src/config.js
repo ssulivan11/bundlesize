@@ -44,7 +44,7 @@ if (program.files) {
     {
       path: program.files,
       maxSize: program.maxSize,
-      warnCheck: config.warnCheck,
+      warnCheck: config.warnCheck || false,
       compression: program.compression || 'gzip'
     }
   ]
