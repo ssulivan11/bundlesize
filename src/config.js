@@ -14,12 +14,10 @@ const configPaths = ['package.json', 'bundlesize.config.json']
 program
   .option('-f, --files [files]', 'files to test against (dist/*.js)')
   .option('-s, --max-size [maxSize]', 'maximum size threshold (3Kb)')
+  .option('-w, --warn', 'warn instead of error on bundle size threshold')
   .option('--debug', 'run in debug mode')
   .option('--config [config]', 'Get path of configuration file')
-  .option(
-    '-c, --compression [compression]',
-    'specify which compression algorithm to use'
-  )
+  .option('-c, --compression [compression]', 'specify which compression algorithm to use')
   .parse(process.argv)
 
 let configFromCli

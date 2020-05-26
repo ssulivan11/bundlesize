@@ -28,12 +28,7 @@ const setBuildStatus = ({
 }
 
 // Generate global message as per https://github.com/siddharthkp/bundlesize/issues/182#issuecomment-343274689
-const getGlobalMessage = ({
-  results,
-  totalSize,
-  totalSizeMaster,
-  totalMaxSize
-}) => {
+const getGlobalMessage = ({ results, totalSize, totalSizeMaster, totalMaxSize }) => {
   let globalMessage
 
   let failures = results.filter(result => !!result.fail).length
@@ -51,9 +46,7 @@ const getGlobalMessage = ({
     // multiple files, multiple failures
     const change = totalSize - totalSizeMaster
     const prettyChange =
-      change === 0
-        ? 'no change'
-        : change > 0 ? `+${bytes(change)}` : `-${bytes(Math.abs(change))}`
+      change === 0 ? 'no change' : change > 0 ? `+${bytes(change)}` : `-${bytes(Math.abs(change))}`
 
     globalMessage = `${failures} out of ${results.length} bundles are too big! (${prettyChange})`
   } else {
@@ -62,9 +55,7 @@ const getGlobalMessage = ({
     const prettyMaxSize = bytes(totalMaxSize)
     const change = totalSize - totalSizeMaster
     const prettyChange =
-      change === 0
-        ? 'no change'
-        : change > 0 ? `+${bytes(change)}` : `-${bytes(Math.abs(change))}`
+      change === 0 ? 'no change' : change > 0 ? `+${bytes(change)}` : `-${bytes(Math.abs(change))}`
 
     globalMessage = `Total bundle size is ${prettySize}/${prettyMaxSize} (${prettyChange})`
   }
@@ -75,7 +66,7 @@ const analyse = ({ files, masterValues }) => {
   return files.map(file => {
     let fail = false
     file.master = masterValues[file.path]
-    const { path, size, master, maxSize, compression = 'gzip' } = file
+    const { path, size, master, maxSize, warnCheck, compression = 'gzip' } = file
 
     let compressionText = '(no compression)'
     if (compression && compression !== 'none') {
@@ -95,9 +86,13 @@ const analyse = ({ files, masterValues }) => {
     */
 
     if (size > maxSize) {
-      fail = true
       if (prettySize) message += `> maxSize ${prettySize} ${compressionText}`
-      error(message, { fail: false, label: 'FAIL' })
+      if (warnCheck) {
+        warn(message, { fail: false, label: 'WARN' })
+      } else {
+        fail = true
+        error(message, { fail: false, label: 'FAIL' })
+      }
     } else if (!master) {
       if (prettySize) message += `< maxSize ${prettySize} ${compressionText}`
       info('PASS', message)
@@ -129,9 +124,7 @@ const analyse = ({ files, masterValues }) => {
 
 const report = ({ files, globalMessage, fail }) => {
   /* prepare the build page */
-  const params = encodeURIComponent(
-    JSON.stringify({ files, repo, branch, commit_message, sha })
-  )
+  const params = encodeURIComponent(JSON.stringify({ files, repo, branch, commit_message, sha }))
   let url = `https://bundlesize-store.now.sh/build?info=${params}`
 
   debug('url before shortening', url)

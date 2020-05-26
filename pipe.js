@@ -17,16 +17,15 @@ if (process.stdin.isTTY) {
 program
   .option('-n, --name [name]', 'custom name for a file (lib.min.js)')
   .option('-s, --max-size [maxSize]', 'maximum size threshold (3Kb)')
-  .option(
-    '-c, --compression [gzip|brotli|none]',
-    'specify which compression algorithm to use'
-  )
+  .option('-c, --compression [gzip|brotli|none]', 'specify which compression algorithm to use')
+  .option('-w, --warn', 'warn instead of error on bundle size threshold')
   .option('--debug', 'run in debug mode')
   .parse(process.argv)
 
 const config = {
   name: program.name || require('read-pkg-up').sync().pkg.name,
   maxSize: program.maxSize,
+  warnCheck: program.warn || false,
   compression: program.compression || 'gzip'
 }
 
@@ -39,6 +38,7 @@ readStream(process.stdin).then(data => {
   const file = {
     path: config.name,
     maxSize,
+    warnCheck: config.warnCheck,
     size,
     compression: config.compression
   }
