@@ -1,10 +1,10 @@
 {
-  "name": "bundlesize",
-  "version": "0.18.0",
+  "name": "bundlesize-warn",
+  "version": "0.18.1",
   "description": "Keep your library size in check",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/siddharthkp/bundlesize.git"
+    "url": "git+https://github.com/ssulivan11/bundlesize.git"
   },
   "main": "index.js",
   "bin": {
